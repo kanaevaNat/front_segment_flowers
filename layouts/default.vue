@@ -3,12 +3,12 @@
         <header class="header">
             <v-container class="header_container">
                 <v-btn variant="plain" to="/" class="header_logo">
-                    Лого)
+                    <img alt="Логотип" src="@/assets/logo.png" width="64">
                 </v-btn>
                 <div class="header_user">
                     <template v-if="!store.authorized">
                         <div class="header_buttons">
-                            <v-btn variant="tonal" to="/login">
+                            <v-btn variant="flat" to="/login" color="primary">
                                 Войти
                             </v-btn>
                             <v-btn to="/register">
@@ -43,7 +43,7 @@
             </v-container>
             <div class="header_content">
                 <div class="header_content_text">
-                    Какие мы крутые
+                    Сервис по распознаванию цветов
                 </div>
             </div>
         </header>
@@ -67,7 +67,7 @@
                     <v-tab to="/create-model">
                         Обучение модели
                     </v-tab>
-                    <v-tab>
+                    <v-tab to="/history">
                         История распознаваний
                     </v-tab>
                     <v-tab to="/models">
@@ -76,12 +76,12 @@
                 </template>
             </v-tabs>
         </section>
-        <v-container>
+        <v-container class="page_content">
             <slot/>
         </v-container>
         <v-footer class="d-flex bg-black justify-space-between">
-            <span>Разработали дебилы</span>
-            <v-btn href="mailto:yandex@yandex.ru" variant="tonal">
+            <span>Разработано студентами группы ПРИМ-122 Канаевой Натальей и Волковым Ильёй</span>
+            <v-btn href="kanaeva.natashenka@mail.ru" variant="tonal">
                 Связаться с нами
             </v-btn>
         </v-footer>
@@ -117,19 +117,37 @@ const logout = () => {
     }
 
     &_logo {
+        text-decoration: none;
     }
 
     &_content {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: green;
+        background: url(@/assets/flower-bg.png) center / cover;
         height: 300px;
+        color: #fff;
+        font-size: 32px;
+        font-weight: 600;
     }
 
     &_buttons {
         display: flex;
         gap: 8px;
+    }
+}
+
+.page {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+
+    &_content {
+        flex: 1 0 auto;
+    }
+
+    .v-footer {
+        flex: none !important;
     }
 }
 </style>
