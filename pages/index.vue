@@ -13,9 +13,11 @@
                 этих растениях.
             </template>
         </v-card>
-        <v-row class="mt-2" v-if="false">
+        <v-row class="mt-2">
             <v-col v-for="i in 3" :key="i" cols="4">
-                <div class="image"/>
+                <div class="image">
+                    <v-img :src="images[`../assets/home${i}.png`]"/>
+                </div>
             </v-col>
         </v-row>
     </div>
@@ -25,11 +27,12 @@
 defineOptions({
     name: 'index',
 });
+
+const images = import.meta.glob('../assets/home*.png', {eager: true, import: 'default'}) as Record<string, string>
 </script>
 
 <style lang="scss" scoped>
 .image {
-    height: 300px;
-    background: green;
+    border-radius: 10px;
 }
 </style>
