@@ -38,13 +38,18 @@
                 Распознать
             </v-btn>
         </div>
+        <div class="d-flex justify-center mt-4" v-if="image && loaded">
+            <v-btn :loading="loading" :disabled="classified" @click="loading = true">
+                Классифицировать
+            </v-btn>
+        </div>
         <v-row class="mt-2" v-if="image && loaded">
             <v-col cols="4">
                 <v-card>
                     <template #title>
                         <v-img :src="image0" height="150px"/>
                     </template>
-                    <template #text>
+                    <template #text v-if="classified">
                         Роза
                     </template>
                 </v-card>
@@ -54,7 +59,7 @@
                     <template #title>
                         <v-img :src="image1" height="150px"/>
                     </template>
-                    <template #text>
+                    <template #text v-if="classified">
                         Подсолнух
                     </template>
                 </v-card>
@@ -64,12 +69,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { Result } from '~/pages/history.vue';
 
 const file = shallowRef<File | null>(null);
 const image = shallowRef<string | null>();
 const loading = ref(false);
 const loaded = ref(false);
+const classified = ref(false);
 
 watch(file, async () => {
     if (!file.value) {
@@ -92,6 +97,30 @@ const image1 = images['../assets/1.jpeg'] as string;
 watch(loading, async (val) => {
     if (!val) return;
 
+    if (loaded.value) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * 3));
+
+        localStorage.setItem('history', JSON.stringify([
+            {
+                id: 1,
+                user: 2,
+                image: image.value!,
+                date: Date.now(),
+                result: [
+                    image0,
+                    image1,
+                ],
+                categories: ['Роза', 'Подсолнух'],
+            },
+        ]));
+
+        classified.value = true;
+
+        loading.value = false;
+
+        return;
+    }
+
     await new Promise(resolve => setTimeout(resolve, 1000 * 5));
 
     try {
@@ -105,7 +134,7 @@ watch(loading, async (val) => {
                     image0,
                     image1,
                 ],
-                categories: ['Роза', 'Подсолнух'],
+                categories: [],
             },
         ]));
 
