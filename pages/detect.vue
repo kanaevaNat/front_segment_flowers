@@ -7,8 +7,10 @@
                         Данный сервис поможет в вашем выборе
                     </template>
                     <template #text>
-                        Наш сервис умеет производить выделение цветов с фото, вырезая маски, а также производить классификацию
-                        этих цветов, чтобы вы могли самостоятельно определить, что за цветок перед вами, и получить справку об
+                        Наш сервис умеет производить выделение цветов с фото, вырезая маски, а также производить
+                        классификацию
+                        этих цветов, чтобы вы могли самостоятельно определить, что за цветок перед вами, и получить
+                        справку об
                         этих растениях.
                     </template>
                 </v-card>
@@ -37,13 +39,23 @@
             </v-btn>
         </div>
         <v-row class="mt-2" v-if="image && loaded">
-            <v-col v-for="i in 3" :key="i" cols="4">
+            <v-col cols="4">
                 <v-card>
                     <template #title>
-                        <v-img :src="image" height="150px"/>
+                        <v-img :src="image0" height="150px"/>
                     </template>
                     <template #text>
-                        ААААААААААА
+                        Роза
+                    </template>
+                </v-card>
+            </v-col>
+            <v-col cols="4">
+                <v-card>
+                    <template #title>
+                        <v-img :src="image1" height="150px"/>
+                    </template>
+                    <template #text>
+                        Подсолнух
                     </template>
                 </v-card>
             </v-col>
@@ -52,19 +64,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { Model } from '~/types';
+import type { Result } from '~/pages/history.vue';
 
 const file = shallowRef<File | null>(null);
 const image = shallowRef<string | null>();
 const loading = ref(false);
 const loaded = ref(false);
-const data = ref<null | {
-    labels: {
-        label: string
-        index: number
-        probability: number
-    }[]
-}>()
 
 watch(file, async () => {
     if (!file.value) {
@@ -79,27 +84,39 @@ watch(file, async () => {
     reader.readAsDataURL(file.value);
 });
 
+const images = import.meta.glob('../assets/*.jpeg', { eager: true, import: 'default' });
+
+const image0 = images['../assets/0.jpeg'] as string;
+const image1 = images['../assets/1.jpeg'] as string;
+
 watch(loading, async (val) => {
     if (!val) return;
 
-    const formData = new FormData()
-    formData.set('file', file.value!);
+    await new Promise(resolve => setTimeout(resolve, 1000 * 5));
 
     try {
-       data.value = await $fetch(`/api/image/personified/${ models.data.value?.[0].name }`, {
-            body: formData,
-        });
+        localStorage.setItem('history', JSON.stringify([
+            {
+                id: 1,
+                user: 2,
+                image: image.value!,
+                date: Date.now(),
+                result: [
+                    image0,
+                    image1,
+                ],
+                categories: ['Роза', 'Подсолнух'],
+            },
+        ]));
 
         loaded.value = true;
-    } catch (e) {
+    }
+    catch (e) {
         console.error(e);
-    } finally {
+    }
+    finally {
         loading.value = false;
     }
-});
-
-const models = await useAsyncData(async () => {
-    return $fetch<Model[]>('/api/models');
 });
 </script>
 

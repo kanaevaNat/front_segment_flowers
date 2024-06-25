@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { User } from '~/types';
+import type { User, UserRole } from '~/types';
 
 const login = ref<string | null>(null);
 const firstName = ref<string | null>(null);
@@ -43,18 +43,12 @@ const confirmPassword = ref<string | null>(null);
 const isAuthorized = useCookie('authorized');
 
 const authorize = async () => {
-    const user = await $fetch<User>('/api/login', {
-        method: 'POST',
-        body: {
-            login: login.value,
-            password: password.value,
-            firstName: firstName.value,
-        },
-    });
-
-    useCookie('token').value = user.access_token;
-    isAuthorized.value = 'true';
-    location.reload();
+    useCookie<User>('registered').value = {
+        login: login.value!,
+        firstName: firstName.value!,
+        role: 'user',
+    }
+    navigateTo('/login')
 };
 
 if (isAuthorized.value) navigateTo('/');

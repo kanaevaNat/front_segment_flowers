@@ -5,19 +5,19 @@
         </h1>
         <v-data-table :headers :items hide-default-footer>
             <template #[`item.image`]="{ item }">
-               <a class="pa-2" :href="item.image" target="_blank">
-                   <v-img :src="item.image"/>
-               </a>
+                <a class="pa-2" :href="item.image" target="_blank">
+                    <v-img :src="item.image"/>
+                </a>
             </template>
             <template #[`item.date`]="{ item }">
                 {{ formatter.format(item.date) }}
             </template>
             <template #[`item.result`]="{ item }">
-               <div class="d-flex flex-wrap" style="gap: 8px;">
-                   <a class="pa-2" :href="image" target="_blank" v-for="(image, index) in item.result" :key="index">
-                       <v-img :src="image" :width="100"/>
-                   </a>
-               </div>
+                <div class="d-flex flex-wrap" style="gap: 8px;">
+                    <a class="pa-2" :href="image" target="_blank" v-for="(image, index) in item.result" :key="index">
+                        <v-img :src="image" :width="100"/>
+                    </a>
+                </div>
             </template>
             <template #[`item.categories`]="{ item }">
                 {{ item.categories.join(', ') }}
@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-interface Result {
+export interface Result {
     id: number;
     user: number;
     image: string;
@@ -70,29 +70,8 @@ const headers = [
         value: 'categories',
     },
 ];
-const flower = import.meta.glob('../assets/flower-bg.png', {
-    import: 'default',
-    eager: true,
-})['../assets/flower-bg.png'] as string;
 
-const items = reactive<Result[]>([
-    {
-        id: 1,
-        user: 1,
-        image: flower,
-        date: Date.now(),
-        result: [flower, flower, flower],
-        categories: ['Цветок', 'Хуёк', 'Хуёцёк']
-    },
-    {
-        id: 2,
-        user: 2,
-        image: flower,
-        date: Date.now(),
-        result: [flower, flower, flower],
-        categories: ['Цветок', 'Хуёк', 'Хуёцёк']
-    },
-]);
+const items = typeof window === 'undefined' ? [] : JSON.parse(localStorage.getItem('history') ?? '[]');
 </script>
 
 <!--<style lang="scss" scoped>

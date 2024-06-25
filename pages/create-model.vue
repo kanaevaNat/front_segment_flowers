@@ -16,6 +16,7 @@
                 v-model="epoch"
             />
             <v-select v-model="select" :items="['VGG-16', 'VGG-19']" label="Классификатор" clearable/>
+            <v-checkbox v-model="premium" label="Премиум"/>
         </template>
         <template #actions>
             <v-btn
@@ -31,25 +32,29 @@
 
 <script lang="ts" setup>
 import { VNumberInput } from 'vuetify/labs/VNumberInput';
+import type { IModel } from '~/pages/models.vue';
 
 const text = ref('');
 const batch = ref(0);
 const epoch = ref(0);
 const select = ref<string | null>(null);
+const premium = ref(false)
 const file = shallowRef<null | File>(null);
 const isBatchInvalid = computed(() => batch.value && (batch.value & (batch.value - 1)) !== 0);
 
 const submit = async () => {
-    const formData = new FormData();
-    formData.set('file', file.value!);
-    formData.set('name', text.value);
-    formData.set('batch', batch.value.toString());
-    formData.set('epoch', epoch.value.toString());
-    formData.set('select', select.value?.toString() ?? '');
-
-    await $fetch(`/model/train`, {
-        body: formData,
-    });
+    useCookie<IModel[]>('models').value = [
+        ...(useCookie<IModel[]>('models').value ?? []),
+        {
+            title: text.value,
+            percent: 87,
+            error: 0.43,
+            date: Date.now(),
+            status: 'educating',
+            isDefault: false,
+            isPremium: premium.value,
+        }
+    ]
 
     navigateTo('/models');
 };

@@ -8,9 +8,9 @@
                 <template v-if="!item.percent">
                     -
                 </template>
-               <template v-else>
-                   {{ item.percent }}%
-               </template>
+                <template v-else>
+                    {{ item.percent }}%
+                </template>
             </template>
             <template #[`item.error`]="{ item }">
                 <template v-if="!item.error">
@@ -21,28 +21,36 @@
                 </template>
             </template>
             <template #[`item.date`]="{ item }">
-               {{ formatter.format(item.date) }}
+                {{ formatter.format(item.date) }}
             </template>
             <template #[`item.status`]="{ item }">
-               <template v-if="item.status === 'educated'">
-                   Обучена
-               </template>
+                <template v-if="item.status === 'educated'">
+                    Обучена
+                </template>
                 <template v-else>
                     Обучается
                 </template>
             </template>
             <template #[`item.default`]="{ item }">
-                <v-radio :true-value="item.title" :false-value="false" :model-value="item.isDefault ? item.title : false" @input="$event && [items.forEach(x => x.isDefault = false), item.isDefault = true]"/>
+                <v-radio
+                    :true-value="item.title"
+                    :false-value="false"
+                    :model-value="item.isDefault ? item.title : false"
+                    @input="$event && [items.forEach(x => x.isDefault = false), item.isDefault = true]"
+                />
             </template>
             <template #[`item.premium`]="{ item }">
-                <v-checkbox style="justify-content: flex-start; grid-template-areas: none; grid-template-columns: none" v-model="item.isPremium"/>
+                <v-checkbox
+                    style="justify-content: flex-start; grid-template-areas: none; grid-template-columns: none"
+                    v-model="item.isPremium"
+                />
             </template>
         </v-data-table>
     </div>
 </template>
 
 <script lang="ts" setup>
-interface Model {
+export interface IModel {
     title: string;
     percent?: number;
     error?: number;
@@ -56,7 +64,7 @@ const formatter = new Intl.DateTimeFormat('ru-RU', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-})
+});
 
 const headers = [
     {
@@ -89,24 +97,16 @@ const headers = [
     },
 ];
 
-const items = reactive<Model[]>([
-    {
-        title: 'Модель 1',
-        status: 'educating',
-        date: Date.now(),
-        isDefault: false,
-        isPremium: true,
-    },
-    {
-        title: 'Модель 2',
-        status: 'educated',
-        error: 228,
-        percent: 85,
-        date: Date.now(),
-        isDefault: true,
-        isPremium: false,
-    },
-]);
+const items = reactive<IModel[]>([...useCookie<IModel[]>('models').value ?? []]);
+items.unshift({
+    title: 'VGG-19',
+    status: 'educated',
+    date: Date.now() - (1000 * 60 * 60 * 48),
+    percent: 89,
+    error: 0.47,
+    isDefault: true,
+    isPremium: false,
+});
 </script>
 
 <!--<style lang="scss" scoped>

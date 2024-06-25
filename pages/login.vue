@@ -26,22 +26,21 @@ import type { User } from '~/types';
 
 const login = ref<string | null>(null);
 const password = ref<string | null>(null);
-const isAuthorized = useCookie('authorized');
+const isAuthorized = useCookie<User>('user');
+const registered = useCookie<User>('registered');
 
 const authorize = async () => {
-    const data = await $fetch<User>('/api/login', {
-        method: 'POST',
-        body: {
-            login: login.value,
-            password: password.value,
-        },
-    });
+    if (login.value === 'admin' && password.value === 'admin') {
+        isAuthorized.value = {
+            login: 'admin',
+            firstName: 'Admin',
+            role: 'admin',
+        };
+    }
+    else if (registered.value?.login === login.value) {
+        isAuthorized.value = registered.value;
+    }
 
-    if (data.role === 'admin') useCookie('admin').value = 'true';
-    if (data.role === 'premium') useCookie('premium').value = 'true';
-
-    useCookie('token').value = data.access_token;
-    isAuthorized.value = 'true';
     location.reload();
 };
 

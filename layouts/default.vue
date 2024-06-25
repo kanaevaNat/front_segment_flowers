@@ -27,8 +27,13 @@
                                 <v-btn
                                     variant="text"
                                     v-bind="props"
-                                    icon="mdi-account"
-                                />
+                                    color="primary"
+                                >
+                                    <template #prepend>
+                                        <v-icon>mdi-account</v-icon>
+                                    </template>
+                                    {{ store.user?.firstName }}
+                                </v-btn>
                             </div>
                         </template>
                         <v-list>
@@ -49,15 +54,18 @@
         </header>
         <section class="header_nav bg-grey-darken-3">
             <v-tabs align-tabs="center" model-value="">
+                <v-tab to="/">
+                    Главная
+                </v-tab>
+                <v-tab to="/history">
+                    История распознаваний
+                </v-tab>
                 <template v-if="!store.isAdmin">
                     <v-tab to="/detect">
                         Распознать
                     </v-tab>
                     <v-tab v-if="!store.isPremium">
                         Расширить возможности
-                    </v-tab>
-                    <v-tab v-else>
-                        История распознаваний
                     </v-tab>
                 </template>
                 <template v-else>
@@ -66,9 +74,6 @@
                     </v-tab>
                     <v-tab to="/create-model">
                         Обучение модели
-                    </v-tab>
-                    <v-tab to="/history">
-                        История распознаваний
                     </v-tab>
                     <v-tab to="/models">
                         Модели
@@ -90,17 +95,15 @@
 
 <script lang="ts" setup>
 import { useStore } from '~/store';
+import type { User } from '~/types';
 
 const store = useStore();
+const isAuthorized = useCookie<User>('user');
 
-store.authorized = !!useCookie('authorized').value;
-store.isAdmin = !!useCookie('admin').value;
-store.isPremium = !!useCookie('premium').value;
+if(isAuthorized.value) store.user = isAuthorized.value
 
 const logout = () => {
-    useCookie('authorized').value = undefined;
-    useCookie('admin').value = undefined;
-    useCookie('premium').value = undefined;
+    useCookie('user').value = undefined;
     location.reload();
 };
 </script>
