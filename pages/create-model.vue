@@ -47,8 +47,6 @@ const submit = async () => {
         ...(useCookie<IModel[]>('models').value ?? []),
         {
             title: text.value,
-            percent: 87,
-            error: 0.43,
             date: Date.now(),
             status: 'educating',
             isDefault: false,
