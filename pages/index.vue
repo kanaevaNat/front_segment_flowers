@@ -34,5 +34,6 @@ const images = import.meta.glob('../assets/home*.png', {eager: true, import: 'de
 <style lang="scss" scoped>
 .image {
     border-radius: 10px;
+    overflow: hidden;
 }
 </style>
